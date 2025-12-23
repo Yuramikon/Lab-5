@@ -56,6 +56,8 @@ public:
         }
 
         setCount--;
+        find(x);
+        find(y);
     }
     
     // Check if x and y are in the same set
