@@ -15,15 +15,38 @@ private:
 public:
     DisjointSet(int n) {
         // TODO: Initialize parent and rank arrays
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
     }
 
     int find(int x) {
         // TODO: Implement find with path compression
-        return -1; // Placeholder
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]); 
+        }
+        return parent[x];
     }
 
     void unite(int x, int y) {
         // TODO: Implement union by rank
+        if (connected(x, y)) return; 
+        
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } 
+        else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } 
+        else {
+            parent[rootY] = rootX;
+            rank[rootX]++; 
+        }
     }
 
     bool connected(int x, int y) {
@@ -75,6 +98,19 @@ public:
 
     void generate() {
         // TODO: Implement Randomized Kruskal's Algorithm
+        random_device rd;
+        mt19937 gen(rd());
+        
+        shuffle(walls.begin(), walls.end(), gen);
+        
+        for (int i = 0; i < walls.size(); i++) {
+            int cell1 = walls[i].cell1;
+            int cell2 = walls[i].cell2;
+
+            if (!ds.connected(cell1, cell2)) {
+                ds.unite(cell1, cell2);
+            }
+        }
     }
 
     void printMaze() {
