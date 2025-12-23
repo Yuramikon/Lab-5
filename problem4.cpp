@@ -23,12 +23,43 @@ using namespace std::chrono;
 // Space: O(K) for the count array
 void countingSort(vector<int>& arr, int maxVal) {
     // Implement this
+    vector<int> count(maxVal + 1, 0);
+
+    for (int i = 0; i < arr.size(); i++) {
+        count[arr[i]]++;
+    }
+
+    int index = 0;
+    for (int val = 0; val <= maxVal; val++) {
+        while (count[val]--) {
+            arr[index++] = val;
+        }
+    }
 }
 
 // Counting Sort for a specific digit (used by Radix Sort)
 // This version is stable - preserves relative order of equal elements
 void countingSortByDigit(vector<int>& arr, int exp) {
     // Implement this
+    int n = arr.size();
+    vector<int> output(n);
+    int count[10] = {0};
+
+    for (int i = 0; i < n; i++) {
+        int digit = (arr[i] / exp) % 10;
+        count[digit]++;
+    }
+
+    for (int i = 1; i < 10; i++)
+        count[i] += count[i - 1];
+
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (arr[i] / exp) % 10;
+        output[count[digit] - 1] = arr[i];
+        count[digit]--;
+    }
+
+    arr = output;
 }
 
 // Radix Sort (LSD - Least Significant Digit first)
@@ -36,6 +67,10 @@ void countingSortByDigit(vector<int>& arr, int exp) {
 // Time: O(d * (N + 10)) where d is number of digits
 void radixSort(vector<int>& arr) {
     // Implement this
+    int maxVal = *max_element(arr.begin(), arr.end());
+
+    for (int exp = 1; maxVal / exp > 0; exp *= 10)
+        countingSortByDigit(arr, exp);
 }
 
 // Quick Sort for comparison
