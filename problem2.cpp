@@ -14,12 +14,13 @@ class UnionFind {
 private:
     vector<int> parent;  // parent[i] = parent of element i
     vector<int> rank_;   // rank_[i] = rank (approximate depth) of tree rooted at i
-
+    int setCount;
 public:
     // Initialize n elements (0 to n-1), each in its own set
     UnionFind(int n) {
         parent.resize(n);
         rank_.resize(n, 0);
+        setCount = n;
         // Initially, each element is its own parent (self-loop)
         for (int i = 0; i < n; i++) {
             parent[i] = i;
@@ -29,26 +30,44 @@ public:
     // Find the representative (root) of the set containing x
     // Implement PATH COMPRESSION: make nodes point directly to root
     int find(int x) {
-        // Implement this
-        return x;  // placeholder
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]); 
+        }
+        return parent[x];
     }
     
     // Unite the sets containing x and y
     // Implement UNION BY RANK: attach smaller tree under larger tree
     void unite(int x, int y) {
-        // Implement this
+        if (connected(x, y)) return; 
+        
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rank_[rootX] < rank_[rootY]) {
+            parent[rootX] = rootY;
+        } 
+        else if (rank_[rootX] > rank_[rootY]) {
+            parent[rootY] = rootX;
+        } 
+        else {
+            parent[rootY] = rootX;
+            rank_[rootX]++; 
+        }
+
+        setCount--;
     }
     
     // Check if x and y are in the same set
     bool connected(int x, int y) {
         // Implement this
-        return false;  // placeholder
+        return find(x) == find(y);
     }
     
     // Return the number of disjoint sets
     int countSets() {
         // Implement this
-        return 0;  // placeholder
+        return setCount;
     }
     
     // Debug: print the parent array
