@@ -56,6 +56,8 @@ public:
         }
 
         numNetworks--;
+        find(x);
+        find(y);
     }
     
     // Query if two data centers can communicate
